@@ -30,7 +30,7 @@ public class ReportHandlerImpl implements ReportHandler {
 
   private static final Map<String, ReportGenerator> reportMap = new HashMap<>();
 
-  static {
+  public static void init() {
     ReportGenerator salesman = new SalesmanReportGenerator();
     ReportGenerator customer = new CustomerReportGenerator();
     ReportGenerator sales = new SalesReportGenerator();
@@ -41,13 +41,14 @@ public class ReportHandlerImpl implements ReportHandler {
   }
 
   public void processFile(Path path) {
+    init();
+
     log.info("Processing file {}", path.toString());
     long initial = System.currentTimeMillis();
 
     String processedData = processData(path);
 
-    String fileName =
-        path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf("."));
+    String fileName = path.getFileName().toString().substring(0, path.getFileName().toString().lastIndexOf("."));
     Path outPath = Path.of(publishPath, "/", String.format(FINAL_FILE_PATTERN, fileName));
 
     generateReport(outPath, processedData);
@@ -77,7 +78,7 @@ public class ReportHandlerImpl implements ReportHandler {
 
       return reportMap.values().stream()
           .map(ReportGenerator::report)
-          .reduce("", (acc, it) -> acc + System.lineSeparator() + it);
+          .reduce("", (acc, it) -> acc + it + System.lineSeparator());
 
     } catch (IOException e) {
       e.printStackTrace();
