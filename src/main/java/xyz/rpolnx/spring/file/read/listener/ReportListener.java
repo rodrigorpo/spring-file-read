@@ -17,8 +17,8 @@ import java.nio.file.*;
 @RequiredArgsConstructor
 @Slf4j
 public class ReportListener {
-  private final ReportHandler service;
   private final WatchService watchService;
+  private final ReportHandler handler;
 
   @Value("${watch.path}")
   private String watchPath;
@@ -37,13 +37,13 @@ public class ReportListener {
             continue;
           }
 
-          Path context = Path.of(watchPath, fileName);
+          Path filePath = Path.of(watchPath, fileName);
 
-          if (isLocked(context)) {
+          if (isLocked(filePath)) {
             continue;
           }
 
-          service.processFile(context);
+          handler.processFile(filePath);
         }
         key.reset();
       }

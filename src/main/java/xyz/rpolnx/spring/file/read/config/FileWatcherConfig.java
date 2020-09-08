@@ -30,9 +30,12 @@ public class FileWatcherConfig {
       }
 
       path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+
+      return watchService;
     } catch (IOException e) {
       log.error("Unexpected exception thrown when creating WatchService context", e);
     }
-    return watchService;
+
+    throw new RuntimeException("Cannot create instance of WatchService");
   }
 }
